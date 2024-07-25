@@ -2,9 +2,9 @@ import { useState, useRef } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import Intro from "./components/Intro";
-import animCoherence from "./animCoherence";
-import animCarre from "./animCarre";
-
+import animCoherence from "./animations/animCoherence";
+import animCarre from "./animations/animCarre";
+import Menu from "./components/Menu";
 import Eye from "./components/Eye";
 
 gsap.registerPlugin(useGSAP);
@@ -12,10 +12,9 @@ gsap.registerPlugin(useGSAP);
 function App() {
   const { contextSafe } = useGSAP();
 
-  const [openMenu, setOpenMenu] = useState(false);
   const [type, setType] = useState("linear");
   const tlFace = useRef<gsap.core.Timeline>();
-  const [totalTime, setTotalTime] = useState<number>(300);
+  const [totalTime, setTotalTime] = useState<number>(30);
   const [startTime, setStartTime] = useState<number>(5);
   const [endTime, setEndTime] = useState(5);
   const [paused, setPaused] = useState(true);
@@ -56,86 +55,19 @@ function App() {
   return (
     <main className="bg-red-900 w-full h-full inset-0 absolute overflow-hidden ">
       <Intro />
-      <section
-        className="bg-[rgba(0,0,0,0.9)] backdrop-blur-lg w-full h-full inset-0 absolute duration-500 ease-out z-30"
-        style={
-          openMenu
-            ? { pointerEvents: "auto", transform: "translateX(0)" }
-            : { pointerEvents: "none", transform: "translateX(100%)" }
-        }
-      >
-        <h2 className="text-[4vh] px-5 py-2 font-bold font-mono">Paramètres</h2>
-        <h3 className="px-5 text-[2vh] font-semibold">Type de respiration :</h3>
-        <div className=" w-full gap-5 flex px-10 py-5">
-          <button
-            className=" relative bg-yellow-950 w-full max-w-48 h-32 border-2 border-solid rounded-xl"
-            onClick={() => setType("square")}
-            style={
-              type === "square"
-                ? { borderColor: "white" }
-                : { borderColor: "black" }
-            }
-          >
-            <div className="w-20 h-20 bg-yellow-900 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
-            <p className="relative z-10">Respiration en carré</p>
-          </button>
-          <button
-            className="relative bg-yellow-950 w-full max-w-48 h-32 border-2 border-solid rounded-xl"
-            onClick={() => setType("linear")}
-            style={
-              type === "linear"
-                ? { borderColor: "white" }
-                : { borderColor: "black" }
-            }
-          >
-            <div className="w-2 h-20 bg-yellow-900 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
-            <p className="relative z-10">Cohérence cardiaque</p>
-          </button>
-        </div>
-        <h3 className="px-5 text-[2vh] font-semibold">durée :</h3>
-        <p className="px-10 my-5">
-          <input
-            onChange={(e) => {
-              setTotalTime(parseInt(e.target.value) * 60);
-              pauseTimeline();
-            }}
-            type="number"
-            className="max-w-32 px-4 py-1 mx-1 rounded-xl"
-            placeholder={`${totalTime / 60}`}
-          />
-          minutes
-        </p>
-        <h3 className="px-5 text-[2vh] font-semibold">Décélération :</h3>
-        <p className="px-10 my-5">
-          Temp premier cycle :
-          <input
-            onChange={(e) => {
-              setStartTime(parseInt(e.target.value) / 2);
-              pauseTimeline();
-            }}
-            type="number"
-            placeholder={`${startTime * 2}`}
-            className=" px-4 py-1 max-w-20 mx-1 rounded-xl"
-          />
-          secondes
-        </p>
-        <p className="px-10">
-          Temp dernier cycle :
-          <input
-            onChange={(e) => {
-              setEndTime(parseInt(e.target.value) / 2);
-              pauseTimeline();
-            }}
-            type="number"
-            placeholder={`${endTime * 2}`}
-            className=" px-4 py-1 max-w-20 mx-1 rounded-xl"
-          />
-          secondes
-        </p>
-      </section>
+      <Menu
+        type={type}
+        setType={setType}
+        totalTime={totalTime}
+        setTotalTime={setTotalTime}
+        pauseTimeline={pauseTimeline}
+        startTime={startTime}
+        setStartTime={setStartTime}
+        endTime={endTime}
+        setEndTime={setEndTime}
+      />
       <div className="absolute z-20 bottom-0 left-1 p-5 flex">
         <p className="text-[3vh]">
-          {" "}
           <span id="timer"></span>s
         </p>
       </div>
@@ -186,30 +118,6 @@ function App() {
           )}
         </div>
       </div>
-      <div
-        id="burger-menu"
-        className="absolute top-2 right-2 h-[5vh] w-[5vh] z-40 bg-[rgba(0,0,0,0.75)] rounded-xl"
-        onClick={() => {
-          openMenu ? setOpenMenu(false) : setOpenMenu(true), pauseTimeline();
-        }}
-      >
-        <div
-          className="h-[0.25vh] w-[3vh] bg-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-xl duration-150 origin-left"
-          style={
-            openMenu
-              ? { transform: "rotate(45deg) translate(-50%, -50%)" }
-              : { transform: "rotate(0deg) translate(-50%, -250%)" }
-          }
-        ></div>
-        <div
-          className="h-[0.25vh] w-[3vh] bg-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-xl duration-150 origin-left"
-          style={
-            openMenu
-              ? { transform: "rotate(-45deg) translate(-50%, -50%)" }
-              : { transform: "rotate(0deg) translate(-50%, 150%)" }
-          }
-        ></div>
-      </div>
       <main className=" inset-0 absolute bg-black">
         <div
           className="absolute inset-0 bg-[rgba(0,0,0,0.5)] z-10 duration-500 ease-out"
@@ -250,7 +158,8 @@ function App() {
               <div className="border-[15vmin] rounded-[7.5vmin] border-solid border-[#FFC700]">
                 <div
                   id="face-square"
-                  className="aspect-square scale-90 bg-[#FFC700] border-[1rem] sm:border-[2rem] border-solid border-[#c07300] rounded-full relative"
+                  className="aspect-square scale-90 bg-[#FFC700] rounded-full relative"
+                  style={{ boxShadow: "0 -3rem 0px -0.5rem #c07300 inset" }}
                 >
                   <Eye position="left" type="square-eyes" />
                   <Eye position="right" type="square-eyes" />
@@ -270,7 +179,8 @@ function App() {
           <div id="bg-gradient-progress" className="relative rounded-full">
             <div
               id="face-linear"
-              className="aspect-square w-[90vmin] h-[90vmin] scale-75 bg-[#FFC700] border-[1rem] sm:border-[2rem] border-solid border-[#c07300] rounded-full relative"
+              className="aspect-square w-[90vmin] h-[90vmin] scale-75 bg-[#FFC700] rounded-full relative"
+              style={{ boxShadow: "0 -3rem 0px -0.5rem #c07300 inset" }}
             >
               <Eye position="left" type="linear-eyes" />
               <Eye position="right" type="linear-eyes" />
