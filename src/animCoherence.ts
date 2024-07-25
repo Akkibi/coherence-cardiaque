@@ -2,8 +2,7 @@ const animCoherence = (
   totalTime: number,
   startTime: number,
   endTime: number,
-  tlFace: gsap.core.Timeline,
-  tlLinear: gsap.core.Timeline
+  tlFace: gsap.core.Timeline
 ) => {
   let cumulatedTime = 0;
 
@@ -12,10 +11,10 @@ const animCoherence = (
       startTime + ((endTime - startTime) * cumulatedTime) / totalTime;
     tlFace
       .fromTo(
-        "#linear-eyes",
+        ".linear-eyes",
         { y: "0%", x: "-50%" },
         {
-          y: "-400%",
+          y: "-75%",
           x: "-50%",
           duration: animationDuration,
           ease: "power2.inOut",
@@ -23,7 +22,7 @@ const animCoherence = (
         cumulatedTime
       )
       .to(
-        "#linear-eyes",
+        ".linear-eyes",
         {
           y: "0%",
           x: "-50%",
@@ -34,13 +33,13 @@ const animCoherence = (
       )
       .fromTo(
         "#linear-mouth",
-        { y: "0%", x: "-50%", width: "5%", height: "5%" },
+        { y: "0%", x: "-50%", width: "10%", height: "15%" },
         {
-          y: "-200%",
+          y: "-250%",
           x: "-50%",
           duration: animationDuration,
           ease: "power2.inOut",
-          width: "15%",
+          width: "30%",
           height: "10%",
         },
         cumulatedTime
@@ -52,13 +51,13 @@ const animCoherence = (
           x: "-50%",
           duration: animationDuration,
           ease: "power2.inOut",
-          width: "5%",
-          height: "5%",
+          width: "10%",
+          height: "15%",
         },
         ">"
       );
     if (window.innerWidth > 768) {
-      tlLinear
+      tlFace
         .fromTo(
           "#linear-handle",
           { top: "100%", y: "-100%" },
@@ -76,7 +75,7 @@ const animCoherence = (
           ">"
         );
     } else {
-      tlLinear
+      tlFace
         .fromTo(
           "#linear-handle",
           { left: "100%", x: "-100%" },
@@ -114,9 +113,13 @@ const animCoherence = (
       0
     )
     .fromTo(
-      "#bg-progress",
-      { y: "100%" },
-      { y: "0%", duration: cumulatedTime, ease: "linear" },
+      "#bg-gradient-progress",
+      { background: "conic-gradient(#046AD7 0deg,#00000000 0deg)" },
+      {
+        background: "conic-gradient( #046AD7 360deg,#00000000 360deg)",
+        duration: cumulatedTime,
+        ease: "linear",
+      },
       0
     );
 };

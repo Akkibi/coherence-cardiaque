@@ -2,8 +2,7 @@ const animCarre = (
   totalTime: number,
   startTime: number,
   endTime: number,
-  tlFace: gsap.core.Timeline,
-  tlSquare: gsap.core.Timeline
+  tlFace: gsap.core.Timeline
 ) => {
   let cumulatedTime = 0;
 
@@ -12,19 +11,19 @@ const animCarre = (
       startTime + ((endTime - startTime) * cumulatedTime) / totalTime;
     tlFace
       .fromTo(
-        "#square-eyes",
+        ".square-eyes",
         { y: "0%", x: "-50%" },
         {
-          y: "-400%",
+          y: "-75%",
           x: "-50%",
           duration: animationDuration,
-          delay: animationDuration,
+          delay: animationDuration * 0.75,
           ease: "power2.inOut",
         },
         cumulatedTime
       )
       .to(
-        "#square-eyes",
+        ".square-eyes",
         {
           y: "0%",
           x: "-50%",
@@ -36,14 +35,14 @@ const animCarre = (
       )
       .fromTo(
         "#square-mouth",
-        { y: "0%", x: "-50%", width: "5%", height: "5%" },
+        { y: "100%", x: "-50%", width: "10%", height: "5%" },
         {
-          y: "-200%",
+          y: "-250%",
           x: "-50%",
           duration: animationDuration,
-          delay: animationDuration,
+          delay: animationDuration * 0.75,
           ease: "power2.inOut",
-          width: "15%",
+          width: "30%",
           height: "10%",
         },
         cumulatedTime
@@ -51,17 +50,41 @@ const animCarre = (
       .to(
         "#square-mouth",
         {
+          y: "-400%",
+          x: "-50%",
+          duration: animationDuration * 0.25,
+          ease: "power2.inOut",
+          width: "30%",
+          height: "5%",
+        },
+        ">"
+      )
+      .to(
+        "#square-mouth",
+        {
           y: "0%",
           x: "-50%",
           duration: animationDuration,
-          delay: animationDuration,
+          delay: animationDuration * 0.75,
           ease: "power2.inOut",
-          width: "5%",
+          width: "10%",
+          height: "15%",
+        },
+        ">"
+      )
+      .to(
+        "#square-mouth",
+        {
+          y: "100%",
+          x: "-50%",
+          duration: animationDuration * 0.25,
+          ease: "power2.inOut",
+          width: "10%",
           height: "5%",
         },
         ">"
       );
-    tlSquare
+    tlFace
       .fromTo(
         "#square-handle",
         {
@@ -123,9 +146,13 @@ const animCarre = (
       0
     )
     .fromTo(
-      "#bg-progress",
-      { y: "100%" },
-      { y: "0%", duration: cumulatedTime, ease: "linear" },
+      "#bg-gradient-progress",
+      { background: "conic-gradient(#046AD7 0deg,#00000000 0deg)" },
+      {
+        background: "conic-gradient( #046AD7 360deg,#00000000 360deg)",
+        duration: cumulatedTime,
+        ease: "linear",
+      },
       0
     );
 };

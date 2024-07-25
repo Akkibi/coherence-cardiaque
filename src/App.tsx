@@ -5,44 +5,40 @@ import Intro from "./components/Intro";
 import animCoherence from "./animCoherence";
 import animCarre from "./animCarre";
 
+import Eye from "./components/Eye";
+
 gsap.registerPlugin(useGSAP);
 
 function App() {
   const { contextSafe } = useGSAP();
 
   const [openMenu, setOpenMenu] = useState(false);
-  const [type, setType] = useState("square");
+  const [type, setType] = useState("linear");
   const tlFace = useRef<gsap.core.Timeline>();
-  const tlSquare = useRef<gsap.core.Timeline>();
-  const tlLinear = useRef<gsap.core.Timeline>();
-  const [totalTime, setTotalTime] = useState(300);
-  const [startTime, setStartTime] = useState(5);
+  const [totalTime, setTotalTime] = useState<number>(300);
+  const [startTime, setStartTime] = useState<number>(5);
   const [endTime, setEndTime] = useState(5);
   const [paused, setPaused] = useState(true);
+  const [isFirstStarted, setIsFirstStarted] = useState<boolean>(false);
 
   const playTimeline = contextSafe(() => {
-    if (!tlSquare.current || !tlLinear.current || !tlFace.current) return;
-    tlSquare.current.play();
-    tlLinear.current.play();
+    if (!tlFace.current) return;
     tlFace.current.play();
     setPaused(false);
+    setIsFirstStarted(true);
     if (tlFace.current.progress() === 1) {
       resetTimeline();
     }
   });
 
   const pauseTimeline = contextSafe(() => {
-    if (!tlSquare.current || !tlLinear.current || !tlFace.current) return;
-    tlSquare.current.pause();
-    tlLinear.current.pause();
+    if (!tlFace.current) return;
     tlFace.current.pause();
     setPaused(true);
   });
 
   const resetTimeline = contextSafe(() => {
-    if (!tlSquare.current || !tlLinear.current || !tlFace.current) return;
-    tlSquare.current.pause(0);
-    tlLinear.current.pause(0);
+    if (!tlFace.current) return;
     tlFace.current.pause(0);
     setPaused(true);
     gsap.to("#bg-progress", { y: "100%", duration: 0.5 });
@@ -50,24 +46,10 @@ function App() {
 
   useGSAP(() => {
     tlFace.current = gsap.timeline({ paused: true, onComplete: pauseTimeline });
-    tlSquare.current = gsap.timeline({ paused: true });
-    tlLinear.current = gsap.timeline({ paused: true });
     if (type === "square") {
-      animCarre(
-        totalTime,
-        startTime,
-        endTime,
-        tlFace.current,
-        tlSquare.current
-      );
+      animCarre(totalTime, startTime, endTime, tlFace.current);
     } else if (type === "linear") {
-      animCoherence(
-        totalTime,
-        startTime,
-        endTime,
-        tlFace.current,
-        tlLinear.current
-      );
+      animCoherence(totalTime, startTime, endTime, tlFace.current);
     }
   }, [startTime, endTime, type, totalTime]);
 
@@ -82,11 +64,11 @@ function App() {
             : { pointerEvents: "none", transform: "translateX(100%)" }
         }
       >
-        <h2 className="text-[4vh] px-5 font-mono">Paramètres</h2>
-        <h3 className="px-5 text-[2vh]">Type de respiration :</h3>
+        <h2 className="text-[4vh] px-5 py-2 font-bold font-mono">Paramètres</h2>
+        <h3 className="px-5 text-[2vh] font-semibold">Type de respiration :</h3>
         <div className=" w-full gap-5 flex px-10 py-5">
           <button
-            className=" relative bg-red-950 w-full max-w-48 h-32 border-2 border-solid rounded-xl"
+            className=" relative bg-yellow-950 w-full max-w-48 h-32 border-2 border-solid rounded-xl"
             onClick={() => setType("square")}
             style={
               type === "square"
@@ -94,11 +76,11 @@ function App() {
                 : { borderColor: "black" }
             }
           >
-            <div className="w-20 h-20 bg-red-900 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
+            <div className="w-20 h-20 bg-yellow-900 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
             <p className="relative z-10">Respiration en carré</p>
           </button>
           <button
-            className="relative bg-blue-950 w-full max-w-48 h-32 border-2 border-solid rounded-xl"
+            className="relative bg-yellow-950 w-full max-w-48 h-32 border-2 border-solid rounded-xl"
             onClick={() => setType("linear")}
             style={
               type === "linear"
@@ -106,11 +88,11 @@ function App() {
                 : { borderColor: "black" }
             }
           >
-            <div className="w-2 h-20 bg-blue-900 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
+            <div className="w-2 h-20 bg-yellow-900 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
             <p className="relative z-10">Cohérence cardiaque</p>
           </button>
         </div>
-        <h3 className="px-5 text-[2vh]">durée :</h3>
+        <h3 className="px-5 text-[2vh] font-semibold">durée :</h3>
         <p className="px-10 my-5">
           <input
             onChange={(e) => {
@@ -123,7 +105,7 @@ function App() {
           />
           minutes
         </p>
-        <h3 className="px-5 text-[2vh]">Décélération :</h3>
+        <h3 className="px-5 text-[2vh] font-semibold">Décélération :</h3>
         <p className="px-10 my-5">
           Temp premier cycle :
           <input
@@ -132,7 +114,7 @@ function App() {
               pauseTimeline();
             }}
             type="number"
-            placeholder={`${startTime}`}
+            placeholder={`${startTime * 2}`}
             className=" px-4 py-1 max-w-20 mx-1 rounded-xl"
           />
           secondes
@@ -145,7 +127,7 @@ function App() {
               pauseTimeline();
             }}
             type="number"
-            placeholder={`${endTime}`}
+            placeholder={`${endTime * 2}`}
             className=" px-4 py-1 max-w-20 mx-1 rounded-xl"
           />
           secondes
@@ -208,7 +190,7 @@ function App() {
         id="burger-menu"
         className="absolute top-2 right-2 h-[5vh] w-[5vh] z-40 bg-[rgba(0,0,0,0.75)] rounded-xl"
         onClick={() => {
-          openMenu ? setOpenMenu(false) : setOpenMenu(true);
+          openMenu ? setOpenMenu(false) : setOpenMenu(true), pauseTimeline();
         }}
       >
         <div
@@ -228,44 +210,55 @@ function App() {
           }
         ></div>
       </div>
-      <main
-        className=" inset-0 absolute"
-        style={
-          type === "square"
-            ? { backgroundColor: "rgb(40,15,15)" }
-            : { backgroundColor: "rgb(15,15,45)" }
-        }
-      >
+      <main className=" inset-0 absolute bg-black">
         <div
-          id="bg-progress"
-          className="absolute inset-0 translate-y-1/3 bg-black"
-        ></div>
+          className="absolute inset-0 bg-[rgba(0,0,0,0.5)] z-10 duration-500 ease-out"
+          style={
+            isFirstStarted
+              ? { pointerEvents: "none", opacity: 0 }
+              : { pointerEvents: "auto", opacity: 1 }
+          }
+          onClick={() => {
+            if (tlFace.current && tlFace.current.progress() === 0) {
+              playTimeline();
+              setIsFirstStarted(true);
+            }
+          }}
+        >
+          <svg
+            viewBox="0 0 24 24"
+            style={
+              isFirstStarted
+                ? { left: "100%", top: "100%", scale: 0 }
+                : { left: "50%", top: "50%", scale: 1 }
+            }
+            className="h-[20vh] opacity-75 w-[20vh] top-1/2 left-1/2 absolute -translate-x-1/2 -translate-y-1/2 ease-in duration-300"
+          >
+            <path fill="currentColor" d="M8 5v14l11-7z"></path>
+          </svg>
+        </div>
         <section
           className="flex flex-col md:flex-row justify-evenly items-center h-full w-full"
           style={type === "square" ? { display: "flex" } : { display: "none" }}
         >
-          <div className=" relative w-[90vmin] h-[90vmin] ">
-            <div
-              id="square-handle"
-              className=" absolute w-[10vmin] h-[10vmin] bg-yellow-700 rounded-full"
-            ></div>
-            <div className="border-[15vmin] rounded-[7.5vmin] border-solid border-yellow-400">
+          <div id="bg-gradient-progress" className="relative rounded-full">
+            <div className=" relative w-[90vmin] h-[90vmin] ">
               <div
-                id="face-square"
-                className="aspect-square scale-90 bg-yellow-400 border-[1rem] sm:border-[2rem] border-solid border-yellow-700 rounded-full relative"
-              >
+                id="square-handle"
+                className=" absolute w-[10vmin] h-[10vmin] bg-[#c07300] rounded-full"
+              ></div>
+              <div className="border-[15vmin] rounded-[7.5vmin] border-solid border-[#FFC700]">
                 <div
-                  id="square-eyes"
-                  className="w-1/4 h-[5%] absolute rounded-full bg-yellow-700 top-1/2 left-1/3 -translate-x-1/2 -translate-y-1/2"
-                ></div>
-                <div
-                  id="square-eyes"
-                  className="w-1/4 h-[5%] absolute rounded-full bg-yellow-700 top-1/2 left-2/3 -translate-x-1/2 -translate-y-1/2"
-                ></div>
-                <div
-                  id="square-mouth"
-                  className="w-[5%] h-[5%] bg-yellow-700 top-3/4 left-1/2 absolute rounded-full"
-                ></div>
+                  id="face-square"
+                  className="aspect-square scale-90 bg-[#FFC700] border-[1rem] sm:border-[2rem] border-solid border-[#c07300] rounded-full relative"
+                >
+                  <Eye position="left" type="square-eyes" />
+                  <Eye position="right" type="square-eyes" />
+                  <div
+                    id="square-mouth"
+                    className="w-[5%] h-[5%] bg-[#c07300] top-3/4 left-1/2 absolute rounded-full"
+                  ></div>
+                </div>
               </div>
             </div>
           </div>
@@ -274,30 +267,26 @@ function App() {
           className="flex flex-col md:flex-row justify-evenly items-center h-full w-full"
           style={type === "linear" ? { display: "flex" } : { display: "none" }}
         >
-          <div
-            id="face-linear"
-            className="aspect-square w-[90vmin] h-[90vmin] bg-yellow-400 border-[1rem] sm:border-[2rem] border-solid border-yellow-700 rounded-full relative"
-          >
+          <div id="bg-gradient-progress" className="relative rounded-full">
             <div
-              id="linear-eyes"
-              className="w-1/4 h-[5%] absolute rounded-full bg-yellow-700 top-1/2 left-1/3 -translate-y-1/2"
-            ></div>
-            <div
-              id="linear-eyes"
-              className="w-1/4 h-[5%] absolute rounded-full bg-yellow-700 top-1/2 left-2/3 -translate-y-1/2"
-            ></div>
-            <div
-              id="linear-mouth"
-              className="w-[5%] h-[5%] bg-yellow-700 top-3/4 left-1/2 absolute rounded-full"
-            ></div>
+              id="face-linear"
+              className="aspect-square w-[90vmin] h-[90vmin] scale-75 bg-[#FFC700] border-[1rem] sm:border-[2rem] border-solid border-[#c07300] rounded-full relative"
+            >
+              <Eye position="left" type="linear-eyes" />
+              <Eye position="right" type="linear-eyes" />
+              <div
+                id="linear-mouth"
+                className="w-[5%] h-[5%] bg-[#c07300] top-3/4 left-1/2 absolute rounded-full"
+              ></div>
+            </div>
           </div>
           <div
             id="linear"
-            className=" w-[90vmin] h-[10vh] md:h-[90vmin] md:w-[10vw] bg-yellow-400 rounded-full relative"
+            className=" w-[90vmin] h-[10vh] md:h-[90vmin] md:w-[10vw] bg-[#FFC700] rounded-full relative"
           >
             <div
               id="linear-handle"
-              className="absolute rounded-full bg-yellow-700 w-[10vh] h-[10vh] md:w-[10vw] md:h-[10vw] scale-75"
+              className="absolute rounded-full bg-[#c07300] w-[10vh] h-[10vh] md:w-[10vw] md:h-[10vw] scale-75"
             ></div>
           </div>
         </section>
