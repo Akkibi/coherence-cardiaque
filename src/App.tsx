@@ -14,7 +14,7 @@ function App() {
 
   const [type, setType] = useState("linear");
   const tlFace = useRef<gsap.core.Timeline>();
-  const [totalTime, setTotalTime] = useState<number>(30);
+  const [totalTime, setTotalTime] = useState<number>(300);
   const [startTime, setStartTime] = useState<number>(5);
   const [endTime, setEndTime] = useState(5);
   const [paused, setPaused] = useState(true);
