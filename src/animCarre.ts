@@ -115,22 +115,30 @@ const animCarre = (
         },
         ">"
       )
-      .to("#square-handle", {
-        top: "100%",
-        left: "0%",
-        x: "25%",
-        y: "-125%",
-        duration: animationDuration,
-        ease: "linear",
-      })
-      .to("#square-handle", {
-        top: "0%",
-        left: "0%",
-        x: "25%",
-        y: "25%",
-        duration: animationDuration,
-        ease: "linear",
-      });
+      .to(
+        "#square-handle",
+        {
+          top: "100%",
+          left: "0%",
+          x: "25%",
+          y: "-125%",
+          duration: animationDuration,
+          ease: "linear",
+        },
+        ">"
+      )
+      .to(
+        "#square-handle",
+        {
+          top: "0%",
+          left: "0%",
+          x: "25%",
+          y: "25%",
+          duration: animationDuration,
+          ease: "linear",
+        },
+        ">"
+      );
     cumulatedTime += animationDuration * 4;
   }
   tlFace
