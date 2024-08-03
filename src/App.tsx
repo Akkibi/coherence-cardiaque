@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import Intro from "./components/Intro";
@@ -6,6 +6,8 @@ import animCoherence from "./animations/animCoherence";
 import animCarre from "./animations/animCarre";
 import Menu from "./components/Menu";
 import Eye from "./components/Eye";
+import breatheIn from "../public/sounds/breathe-in.mp3";
+import breatheOut from "../public/sounds/breathe-out.mp3";
 
 gsap.registerPlugin(useGSAP);
 
@@ -13,6 +15,8 @@ function App() {
   const { contextSafe } = useGSAP();
 
   const [type, setType] = useState("linear");
+  const [soundType, setSoundType] = useState("none");
+  const [ambiantType, setAmbiantType] = useState("none");
   const tlFace = useRef<gsap.core.Timeline>();
   const [totalTime, setTotalTime] = useState<number>(300);
   const [startTime, setStartTime] = useState<number>(5);
@@ -29,6 +33,16 @@ function App() {
       resetTimeline();
     }
   });
+
+  useEffect(() => {
+    if (soundType === "breathe") {
+      const audio = new Audio(breatheIn);
+      audio.play();
+    } else if (soundType === "wave") {
+      const audio = new Audio(breatheOut);
+      audio.play();
+    }
+  }, [ambiantType, soundType]);
 
   const pauseTimeline = contextSafe(() => {
     if (!tlFace.current) return;
@@ -58,6 +72,10 @@ function App() {
       <Menu
         type={type}
         setType={setType}
+        soundType={soundType}
+        setSoundType={setSoundType}
+        ambiantType={ambiantType}
+        setAmbiantType={setAmbiantType}
         totalTime={totalTime}
         setTotalTime={setTotalTime}
         pauseTimeline={pauseTimeline}
@@ -85,12 +103,6 @@ function App() {
             viewBox="0 0 20 20"
             xmlns="http://www.w3.org/2000/svg"
           >
-            <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
-            <g
-              id="SVGRepo_tracerCarrier"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            ></g>
             <g id="SVGRepo_iconCarrier">
               <path d="M4 5h3v10H4V5zm12 0v10l-9-5 9-5z"></path>
             </g>
