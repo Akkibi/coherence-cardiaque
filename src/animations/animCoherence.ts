@@ -1,8 +1,11 @@
+import type { Phase } from "../audio/breathAudio";
+
 const animCoherence = (
   totalTime: number,
   startTime: number,
   endTime: number,
-  tlFace: gsap.core.Timeline
+  tlFace: gsap.core.Timeline,
+  onPhase: (phase: Phase, duration: number) => void
 ) => {
   let cumulatedTime = 0;
 
@@ -98,6 +101,9 @@ const animCoherence = (
           ">"
         );
     }
+    tlFace
+      .call(onPhase, ["in", animationDuration], cumulatedTime)
+      .call(onPhase, ["out", animationDuration], cumulatedTime + animationDuration);
     cumulatedTime += animationDuration * 2;
   }
   tlFace

@@ -6,8 +6,8 @@ import animCoherence from "./animations/animCoherence";
 import animCarre from "./animations/animCarre";
 import Menu from "./components/Menu";
 import Eye from "./components/Eye";
-import breatheIn from "../public/sounds/breathe-in.mp3";
-import breatheOut from "../public/sounds/breathe-out.mp3";
+import { breathAudio } from "./audio/breathAudio";
+import { requestWakeLock, releaseWakeLock } from "./webapp/wakeLock";
 
 gsap.registerPlugin(useGSAP);
 
@@ -27,6 +27,8 @@ function App() {
   const playTimeline = contextSafe(() => {
     if (!tlFace.current) return;
     tlFace.current.play();
+    breathAudio.play();
+    requestWakeLock();
     setPaused(false);
     setIsFirstStarted(true);
     if (tlFace.current.progress() === 1) {
@@ -34,35 +36,40 @@ function App() {
     }
   });
 
-  useEffect(() => {
-    if (soundType === "breathe") {
-      const audio = new Audio(breatheIn);
-      audio.play();
-    } else if (soundType === "wave") {
-      const audio = new Audio(breatheOut);
-      audio.play();
-    }
-  }, [ambiantType, soundType]);
+  useEffect(() => breathAudio.setCycle(soundType), [soundType]);
+  useEffect(() => breathAudio.setAmbient(ambiantType), [ambiantType]);
 
   const pauseTimeline = contextSafe(() => {
     if (!tlFace.current) return;
     tlFace.current.pause();
+    breathAudio.pause();
+    releaseWakeLock();
     setPaused(true);
   });
+
+  useEffect(() => {
+    const onHidden = () => document.hidden && pauseTimeline();
+    document.addEventListener("visibilitychange", onHidden);
+    return () => document.removeEventListener("visibilitychange", onHidden);
+  }, [pauseTimeline]);
 
   const resetTimeline = contextSafe(() => {
     if (!tlFace.current) return;
     tlFace.current.pause(0);
+    breathAudio.stop();
+    breathAudio.pause();
+    releaseWakeLock();
     setPaused(true);
     gsap.to("#bg-progress", { y: "100%", duration: 0.5 });
   });
 
   useGSAP(() => {
+    breathAudio.stop();
     tlFace.current = gsap.timeline({ paused: true, onComplete: pauseTimeline });
     if (type === "square") {
-      animCarre(totalTime, startTime, endTime, tlFace.current);
+      animCarre(totalTime, startTime, endTime, tlFace.current, breathAudio.phase);
     } else if (type === "linear") {
-      animCoherence(totalTime, startTime, endTime, tlFace.current);
+      animCoherence(totalTime, startTime, endTime, tlFace.current, breathAudio.phase);
     }
   }, [startTime, endTime, type, totalTime]);
 

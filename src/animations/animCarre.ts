@@ -1,8 +1,11 @@
+import type { Phase } from "../audio/breathAudio";
+
 const animCarre = (
   totalTime: number,
   startTime: number,
   endTime: number,
-  tlFace: gsap.core.Timeline
+  tlFace: gsap.core.Timeline,
+  onPhase: (phase: Phase, duration: number) => void
 ) => {
   let cumulatedTime = 0;
 
@@ -139,6 +142,11 @@ const animCarre = (
         },
         ">"
       );
+    tlFace
+      .call(onPhase, ["in", animationDuration], cumulatedTime)
+      .call(onPhase, ["hold", animationDuration], cumulatedTime + animationDuration)
+      .call(onPhase, ["out", animationDuration], cumulatedTime + animationDuration * 2)
+      .call(onPhase, ["hold", animationDuration], cumulatedTime + animationDuration * 3);
     cumulatedTime += animationDuration * 4;
   }
   tlFace
