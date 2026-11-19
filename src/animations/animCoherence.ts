@@ -1,4 +1,5 @@
 import type { Phase } from "../audio/breathAudio";
+import addTimer from "./timer";
 
 const animCoherence = (
   totalTime: number,
@@ -106,23 +107,13 @@ const animCoherence = (
       .call(onPhase, ["out", animationDuration], cumulatedTime + animationDuration);
     cumulatedTime += animationDuration * 2;
   }
+  addTimer(tlFace, cumulatedTime);
   tlFace
     .fromTo(
-      "#timer",
-      { textContent: cumulatedTime },
-      {
-        textContent: 0,
-        duration: cumulatedTime,
-        ease: "linear",
-        snap: { textContent: 1 },
-      },
-      0
-    )
-    .fromTo(
       "#bg-gradient-progress",
-      { background: "conic-gradient(#046AD7 0deg,#00000000 0deg)" },
+      { background: "conic-gradient(#7A4A00 0deg,#00000000 0deg)" },
       {
-        background: "conic-gradient( #046AD7 360deg,#00000000 360deg)",
+        background: "conic-gradient( #7A4A00 360deg,#00000000 360deg)",
         duration: cumulatedTime,
         ease: "linear",
       },

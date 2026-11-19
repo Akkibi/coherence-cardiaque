@@ -1,5 +1,5 @@
-const CACHE = "coherence-v1";
-const SHELL = ["./", "manifest.webmanifest", "icon.svg", "icon-192.png", "icon-512.png"];
+const CACHE = "coherence-v2";
+const SHELL = ["./", "manifest.webmanifest", "icon.svg", "icon-192.png", "icon-512.png", "fonts/fredoka-latin.woff2"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting()));

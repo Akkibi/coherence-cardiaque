@@ -5,43 +5,50 @@ const Intro = () => {
 
   return (
     <section
-      className=" bg-[rgba(0,0,0,0.9)] backdrop-blur-lg h-full w-full inset-0 absolute duration-150 z-50"
+      className="bg-night h-full w-full inset-0 absolute z-50 overflow-y-auto transition-opacity duration-300 ease-out flex items-center"
       style={
         startpage
-          ? { pointerEvents: "auto", opacity: "1" }
-          : { pointerEvents: "none", opacity: "0" }
+          ? { pointerEvents: "auto", opacity: 1 }
+          : { pointerEvents: "none", opacity: 0 }
       }
+      aria-hidden={!startpage}
     >
-      <div className="absolute top-1/2 left-1/2 w-full -translate-x-1/2 -translate-y-1/2 my-auto">
-        <div className="title px-5 mb-5">
-          <h1 className="text-[4vh] w-full sm:w-3/4 mx-auto">
-            Cohérence cardiaque
-          </h1>
-        </div>
-        <div className="text-[1.75vh] mx-auto w-full px-5 sm:w-2/3 flex gap-[1vh] flex-col">
+      <div className="w-full max-w-xl mx-auto px-6 py-12">
+        <svg viewBox="0 0 64 64" className="w-14 h-14 mb-8" aria-hidden="true">
+          <circle cx="32" cy="32" r="30" fill="#FFC700" />
+          <path d="M8 40a30 30 0 0 0 48 0a30 30 0 0 1-48 0z" fill="#C07300" opacity=".55" />
+          <path d="M18 27q5 4.5 10 0M36 27q5 4.5 10 0" stroke="#C07300" strokeWidth="3" strokeLinecap="round" fill="none" />
+          <ellipse cx="32" cy="41" rx="5" ry="3" fill="#C07300" />
+        </svg>
+        <h1 className="text-4xl font-medium mb-6">Cohérence cardiaque</h1>
+        <div className="flex flex-col gap-3 text-sand max-w-[34rem]">
           <p>
-            La cohérence cardiaque est une technique de respiration qui vise à
+            La cohérence cardiaque est une technique de respiration qui aide à
             réguler le rythme cardiaque et à réduire le stress.
           </p>
           <p>
-            Ce site vous propose un exercice de cohérence cardiaque simple, avec
-            un guide visuel pour vous accompagner.
+            Un visage animé vous guide : inspirez et expirez à son rythme.
           </p>
-          <p>
-            Pour commencer, mettez vos pieds à plat sur le sol, asseyez-vous
-            avec le dos droit, et relachez vos épaules.
+          <p className="text-ink">
+            Posez les pieds à plat sur le sol, asseyez-vous le dos droit et
+            relâchez les épaules.
           </p>
+        </div>
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 mt-10">
           <button
-            className="border-white border-2 px-[5vw] py-2 w-full sm:max-w-min rounded-xl mt-5 hover:scale-105 duration-150"
+            type="button"
+            className="btn bg-sun text-night font-medium rounded-xl h-12 px-8 hover:bg-[#FFD43D]"
             onClick={() => setStartpage(false)}
           >
             Commencer
           </button>
           <a
-            className="my-5 text-blue-500"
+            className="text-sand underline underline-offset-4 decoration-ink/30 hover:text-ink transition-colors"
             href="https://fr.wikipedia.org/wiki/Coh%C3%A9rence_cardiaque"
+            target="_blank"
+            rel="noreferrer"
           >
-            En savoir plus sur la cohérence cardiaque
+            En savoir plus sur Wikipédia
           </a>
         </div>
       </div>

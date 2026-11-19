@@ -6,6 +6,7 @@ import animCoherence from "./animations/animCoherence";
 import animCarre from "./animations/animCarre";
 import Menu from "./components/Menu";
 import Eye from "./components/Eye";
+import { Play, Pause, RotateCcw } from "lucide-react";
 import { breathAudio } from "./audio/breathAudio";
 import { requestWakeLock, releaseWakeLock } from "./webapp/wakeLock";
 
@@ -74,7 +75,7 @@ function App() {
   }, [startTime, endTime, type, totalTime]);
 
   return (
-    <main className="bg-red-900 w-full h-full inset-0 absolute overflow-hidden ">
+    <main className="bg-night w-full h-full inset-0 absolute overflow-hidden">
       <Intro />
       <Menu
         type={type}
@@ -91,55 +92,44 @@ function App() {
         endTime={endTime}
         setEndTime={setEndTime}
       />
-      <div className="absolute z-20 bottom-0 left-1 p-5 flex">
-        <p className="text-[3vh]">
-          <span id="timer"></span>s
+      <div className="absolute z-20 inset-x-0 bottom-0 px-6 pt-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] flex items-center justify-between pointer-events-none">
+        <p className="text-2xl tabular-nums" aria-label="Temps restant">
+          <span id="timer"></span>
         </p>
-      </div>
-      <div id="toolbar" className="absolute z-20 bottom-0 right-0 p-5 flex">
-        <div
-          id="back"
-          className="btn"
-          onClick={() => {
-            resetTimeline();
-          }}
-        >
-          <svg
-            className="h-[5vh] w-[5vh]"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-            xmlns="http://www.w3.org/2000/svg"
+        <div id="toolbar" className="flex gap-3 pointer-events-auto">
+          <button
+            type="button"
+            id="back"
+            aria-label="Recommencer"
+            className="btn h-12 w-12 grid place-items-center rounded-xl bg-dusk hover:bg-ember border border-ink/[0.08]"
+            onClick={() => resetTimeline()}
           >
-            <g id="SVGRepo_iconCarrier">
-              <path d="M4 5h3v10H4V5zm12 0v10l-9-5 9-5z"></path>
-            </g>
-          </svg>
-        </div>
-        <div
-          id="pause"
-          className="btn"
-          onClick={() => {
-            if (!tlFace.current) return;
-            tlFace.current.paused() ? playTimeline() : pauseTimeline();
-          }}
-        >
-          {paused ? (
-            <svg viewBox="0 0 24 24" className="h-[5vh] w-[5vh]">
-              <path fill="currentColor" d="M8 5v14l11-7z"></path>
-            </svg>
-          ) : (
-            <svg viewBox="0 0 24 24" className="h-[5vh] w-[5vh]">
-              <path
-                fill="currentColor"
-                d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"
-              ></path>
-            </svg>
-          )}
+            <RotateCcw size={20} strokeWidth={1.5} />
+          </button>
+          <button
+            type="button"
+            id="pause"
+            aria-label={paused ? "Reprendre" : "Pause"}
+            className="btn h-12 w-12 grid place-items-center rounded-xl bg-dusk hover:bg-ember border border-ink/[0.08]"
+            onClick={() => {
+              if (!tlFace.current) return;
+              tlFace.current.paused() ? playTimeline() : pauseTimeline();
+            }}
+          >
+            {paused ? (
+              <Play size={20} strokeWidth={1.5} />
+            ) : (
+              <Pause size={20} strokeWidth={1.5} />
+            )}
+          </button>
         </div>
       </div>
-      <main className=" inset-0 absolute bg-black">
-        <div
-          className="absolute inset-0 bg-[rgba(0,0,0,0.5)] z-10 duration-500 ease-out"
+      <main className="inset-0 absolute bg-night">
+        <button
+          type="button"
+          aria-label="Démarrer la séance"
+          tabIndex={isFirstStarted ? -1 : 0}
+          className="absolute inset-0 bg-night/60 z-10 grid place-items-center transition-opacity duration-300 ease-out"
           style={
             isFirstStarted
               ? { pointerEvents: "none", opacity: 0 }
@@ -152,18 +142,13 @@ function App() {
             }
           }}
         >
-          <svg
-            viewBox="0 0 24 24"
-            style={
-              isFirstStarted
-                ? { left: "100%", top: "100%", scale: 0 }
-                : { left: "50%", top: "50%", scale: 1 }
-            }
-            className="h-[20vh] opacity-75 w-[20vh] top-1/2 left-1/2 absolute -translate-x-1/2 -translate-y-1/2 ease-in duration-300"
+          <span
+            className="h-24 w-24 rounded-full bg-sun text-night grid place-items-center transition-transform duration-300 ease-out"
+            style={{ transform: isFirstStarted ? "scale(0.8)" : "scale(1)" }}
           >
-            <path fill="currentColor" d="M8 5v14l11-7z"></path>
-          </svg>
-        </div>
+            <Play size={36} strokeWidth={1.5} fill="currentColor" className="translate-x-0.5" />
+          </span>
+        </button>
         <section
           className="flex flex-col md:flex-row justify-evenly items-center h-full w-full"
           style={type === "square" ? { display: "flex" } : { display: "none" }}
